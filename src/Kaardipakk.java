@@ -18,7 +18,7 @@ public class Kaardipakk {
 
     public void segamine() {
         List<Kaart> uuedKaardid = new ArrayList<>();
-        for (int i = 52; i >= 0; i--) {
+        for (int i = kaardid.size(); i >= 0; i--) {
             //Lisab uude List-i kaardi ja eemaldab eelmisest
             Kaart praeguneKaart = kaardid.get((int)(Math.random() * i));
             uuedKaardid.add(praeguneKaart);
