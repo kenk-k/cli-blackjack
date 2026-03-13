@@ -1,6 +1,6 @@
 import java.util.List;
 
-class Kaart {
+public class Kaart {
     private String mast;
     //2-10, J, Q, K ,A
     private String number;
