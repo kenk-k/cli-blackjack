@@ -12,6 +12,7 @@ public class Mangija {
         this.nimi = nimi;
         this.rahahulk = rahahulk;
         this.kasi = new ArrayList<>();
+        this.kasiSplit = new ArrayList<>();
     }
 
     public String getNimi() {
@@ -34,9 +35,15 @@ public class Mangija {
             return true;
         }
     }
+
     public void lisaKaart(Kaart kaart) {
         kasi.add(kaart);
     }
+
+    public void lisaKaartSplit(Kaart kaart) {
+        kasiSplit.add(kaart);
+    }
+
     public void tuhjendaKasi() {
         kasi.clear();
     }

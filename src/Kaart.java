@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Objects;
 
 public class Kaart {
     private String mast;
@@ -27,6 +28,13 @@ public class Kaart {
     public static int kaeVaartus(List<Kaart> kaardid) {
         int kaeSumma = 0;
         for (Kaart kaart: kaardid) {
+            //why tf see autocorrectib selleks mitte '=='
+            if (Objects.equals(kaart.number, "A"))
+                //Ässa väärtuse varieerumine
+                if (kaeSumma + 11 > 21) {
+                    kaeSumma += 1;
+                    continue;
+                }
             kaeSumma += kaart.vaartus;
         }
         return kaeSumma;
