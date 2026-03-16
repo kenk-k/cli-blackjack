@@ -31,4 +31,9 @@ public class Kaart {
         }
         return kaeSumma;
     }
+
+    @Override
+    public String toString() {
+        return mast + number;
+    }
 }
