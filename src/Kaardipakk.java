@@ -13,14 +13,16 @@ public class Kaardipakk {
         this.kaardid = new ArrayList<>();
         String[] mastid = new String[] {"Poti","Ärtu", "Risti", "Ruutu"};
         String[] pildid = new String[] {"J", "Q", "K"};
-        for (String mast: mastid) {
-            for (int j = 2; j < 11; j++) {
-                kaardid.add(new Kaart(mast, Integer.toString(j),j));
+        for (int i = 0; i < mituPakki; i++) {
+            for (String mast : mastid) {
+                for (int j = 2; j < 11; j++) {
+                    kaardid.add(new Kaart(mast, Integer.toString(j), j));
+                }
+                for (String pilt : pildid) {
+                    kaardid.add(new Kaart(mast, pilt, 10));
+                }
+                kaardid.add(new Kaart(mast, "A", 11));
             }
-            for (String pilt: pildid) {
-                kaardid.add(new Kaart(mast, pilt, 10));
-            }
-            kaardid.add(new Kaart(mast, "A", 11));
         }
     }
 
@@ -50,7 +52,7 @@ public class Kaardipakk {
     public void lisamine(Kaart lisatav) {
         kaardid.add(lisatav);
     }
-
+    //Mõttetu toString tegelikult
     @Override
     public String toString() {
         return "Kaardipakk{" +

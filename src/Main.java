@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 public class Main {
     static void main() {
         Kaardipakk kaardipakk = new Kaardipakk(1);

@@ -31,7 +31,7 @@ public class Kaart {
         }
         return kaeSumma;
     }
-
+    //TODO: teha toString ilusamaks
     @Override
     public String toString() {
         return mast + number;
