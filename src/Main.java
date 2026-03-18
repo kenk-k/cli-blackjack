@@ -118,13 +118,13 @@ public class Main {
     public static String[][] sätted(String[][] settings) {
         System.out.println("Redigeeri sätteid\n\n" +
                 "Praegused sätted\nMängijaid: 2\tRaha: 1000\tRaskustase: noob");
-        System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi)");
         Scanner edit;
         Scanner mKogus = null;
         Scanner rKogus = null;
         Scanner dKogus = null;
         label:
         while (true) {
+            System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi)");
             edit = new Scanner(System.in);
             String token = edit.next();
             switch (token) {
@@ -160,6 +160,4 @@ public class Main {
         dKogus.close();
         return settings;
     }
-
-
 }
