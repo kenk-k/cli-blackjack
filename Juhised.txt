@@ -1,0 +1,10 @@
+Menüüdes liikumiseks sisestada oma valitud tegevuse esitäht.
+Igal raundil sisestada oma panuse hulk.
+Seejärel näidatakse ette diileri pealmine kaart ning kõikide mängijate kaardid.
+Kui on sinu kord, siis tee valik: kas küsi kaarte juurde, seisa, topeltpanusta või jaga kaheks.
+Kaheks saab jagada siis, kui sul on kaks sama väärtusega kaarti käes.
+Kui kõik mängijad on lõpetanud, on diileri kord. Kui sinu punktisumma on kõrgem, kui diileril,
+siis saad kahekordse summa tagasi. Kui said blackjacki(Punktisumma 21 kahe kaardiga), saad tagasi 2,5
+korda oma panuse.
+Mängu võitmiseks pead olema mängijatest viimane,kes laua taga on.
+Oled mängu kaotanud, kui sul saab raha otsa.

@@ -17,10 +17,6 @@ public class Kaart {
         return number;
     }
 
-    public String getMast() {
-        return mast;
-    }
-
     public int getVaartus() {
         return vaartus;
     }
@@ -29,7 +25,7 @@ public class Kaart {
         int kaeSumma = 0;
         for (Kaart kaart: kaardid) {
             //why tf see autocorrectib selleks mitte '=='
-            if (Objects.equals(kaart.number, "A"))
+            if (kaart.number.equals("A"))
                 //Ässa väärtuse varieerumine
                 if (kaeSumma + 11 > 21) {
                     kaeSumma += 1;
@@ -39,9 +35,8 @@ public class Kaart {
         }
         return kaeSumma;
     }
-    //TODO: teha toString ilusamaks
     @Override
     public String toString() {
-        return mast + number;
+        return mast +" " + number;
     }
 }

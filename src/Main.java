@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
@@ -90,7 +92,17 @@ public class Main {
     }
 
     public static void abi() {
-
+        File juhised = new File("Juhised.txt");
+        try {
+            Scanner scan = new Scanner(juhised, "utf-8");
+            while (scan.hasNextLine()) {
+                System.out.println(scan.nextLine());
+            }
+            scan.close();
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("Juhiste faili ei leitud. Parandage oma installatsioon.");
+        }
     }
 
     public static String[][] sätted(String[][] settings) {
