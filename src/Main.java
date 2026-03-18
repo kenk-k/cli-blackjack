@@ -5,6 +5,21 @@ import java.util.Scanner;
 
 public class Main {
     static void main(String[] args) {
+        String[][] defSätted = {{"players", "2"},{"start", "1000"},{"diff", "noob"}};
+        while (true) {
+            System.out.println("Tere tulemast kasiinosse.\n\n" +
+                    "Vali tegevus:\tSätted (S)\tAbi (A)\tMängima (M)");
+            Scanner valik = new Scanner (System.in);
+            if (valik.toString().equals("S"))
+                sätted(defSätted);
+            else if (valik.toString().equals("A"))
+                abi();
+            else if (valik.toString().equals("M"))
+                break;
+            else
+                System.out.println("Sisesta sobiv valik.");
+        }
+
         Kaardipakk kaardipakk = new Kaardipakk(1);
         Mangija diiler = new Mangija("Diiler", 10000000);
         Mangija mina = new Mangija("Mina", 1000);
@@ -15,9 +30,10 @@ public class Main {
         //vastaste loomine ja mangijate listi tegemine.
         System.out.print("Mitme vastasega soovid mängida?(number) ");
         Scanner vastasteKogus = new Scanner(System.in);
+        int vastasteKogusInt = vastasteKogus.nextInt();
         ArrayList<Mangija> mangijad = new ArrayList<>();
         mangijad.add(diiler);
-        for (int i = 0; i < vastasteKogus.nextInt(); i++) {
+        for (int i = 0; i < vastasteKogusInt; i++) {
             Mangija lisatav = new Mangija("Tauno Maksimus", 1000);
             mangijad.add(lisatav);
         }
@@ -27,7 +43,6 @@ public class Main {
         //TODO: bet süsteem implementeerida
         while (true) {
             jagamised(mangijad, kaardipakk);
-            ArrayList<Integer> valiidsedSkoorid = new ArrayList<>();
             //TODO: raunde AI vastaste ja diileri vahel saaks targemalt teha
             for (Mangija m : mangijad) {
                 if (m == diiler) {
@@ -38,16 +53,12 @@ public class Main {
                     raund(m, minaAI, kaardipakk);
                 } else {
                     raund(m, diilerAI, kaardipakk);
-                    if (Kaart.kaeVaartus(m.getKasi()) <= 21)
-                        valiidsedSkoorid.add(Kaart.kaeVaartus(m.getKasi()));
                 }
             }
             raund(diiler, diilerAI, kaardipakk);
-            if (Kaart.kaeVaartus(diiler.getKasi()) <= 21)
-                valiidsedSkoorid.add(Kaart.kaeVaartus(diiler.getKasi()));
 
             int minuKaevaartus = Kaart.kaeVaartus(mina.getKasi());
-            if (21 >= minuKaevaartus && minuKaevaartus >= Collections.max(valiidsedSkoorid)) {
+            if (21 >= minuKaevaartus && minuKaevaartus >= Kaart.kaeVaartus(diiler.getKasi())) {
                 System.out.println("You win!");
             }
             else {
@@ -77,4 +88,19 @@ public class Main {
             for (int i = 0; i < 2; i++)
                 m.lisaKaart(k.jagamine());
     }
+
+    public static void abi() {
+
+    }
+
+    public static String[][] sätted(String[][] settings) {
+        System.out.println("Redigeeri sätteid\n\n" +
+                "Praegused sätted\nMängijaid: 2\tRaha: 1000\tRaskustase: noob");
+        System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi");
+        Scanner edit = new Scanner(System.in);
+        if (edit.toString().equals("Mängijad"))
+
+    }
+
+
 }
