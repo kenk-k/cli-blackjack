@@ -136,12 +136,12 @@ public class Main {
                 case "Raha" -> {
                     rKogus = new Scanner(System.in);
                     String subToken2 = rKogus.next();
-                    settings[0][1] = subToken2;
+                    settings[1][1] = subToken2;
                 }
                 case "Raskus" -> {
                     dKogus = new Scanner(System.in);
                     String subToken3 = dKogus.next();
-                    settings[0][1] = subToken3;
+                    settings[2][1] = subToken3;
                 }
                 case "Tagasi" -> {
                     break label;
