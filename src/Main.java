@@ -7,20 +7,30 @@ import java.util.Scanner;
 
 public class Main {
     static void main(String[] args) {
-        String[][] defSätted = {{"players", "2"},{"start", "1000"},{"diff", "noob"}};
+        //Mängu alguse menüü.
+        String[][] defSätted = {{"players", "2"}, {"start", "1000"}, {"diff", "noob"}};
+        System.out.println("Tere tulemast kasiinosse.\n\n" +
+                "Vali tegevus:\tSätted (S)\tAbi (A)\tMängima (M)");
+        Scanner valik;
+        label:
         while (true) {
-            System.out.println("Tere tulemast kasiinosse.\n\n" +
-                    "Vali tegevus:\tSätted (S)\tAbi (A)\tMängima (M)");
-            Scanner valik = new Scanner (System.in);
-            if (valik.toString().equals("S"))
-                sätted(defSätted);
-            else if (valik.toString().equals("A"))
-                abi();
-            else if (valik.toString().equals("M"))
-                break;
-            else
-                System.out.println("Sisesta sobiv valik.");
+            valik = new Scanner(System.in);
+            String token = valik.next();
+            switch (token) {
+                case "S":
+                    defSätted = sätted(defSätted);
+                    break;
+                case "A":
+                    abi();
+                    break;
+                case "M":
+                    break label;
+                default:
+                    System.out.println("Sisesta sobiv valik.");
+                    break;
+            }
         }
+        valik.close();
 
         Kaardipakk kaardipakk = new Kaardipakk(1);
         Mangija diiler = new Mangija("Diiler", 10000000);
@@ -62,8 +72,7 @@ public class Main {
             int minuKaevaartus = Kaart.kaeVaartus(mina.getKasi());
             if (21 >= minuKaevaartus && minuKaevaartus >= Kaart.kaeVaartus(diiler.getKasi())) {
                 System.out.println("You win!");
-            }
-            else {
+            } else {
                 System.out.println("You lose :(");
             }
             System.out.println("uus mäng(Y/N)? ");
@@ -73,6 +82,7 @@ public class Main {
         }
 
     }
+
     //TODO: nimetada see meetod kuidagi targemalt
     public static int raund(Mangija mangija, Vastane ai, Kaardipakk kaardipakk) {
         while (Kaart.kaeVaartus(mangija.getKasi()) <= 21) {
@@ -108,10 +118,47 @@ public class Main {
     public static String[][] sätted(String[][] settings) {
         System.out.println("Redigeeri sätteid\n\n" +
                 "Praegused sätted\nMängijaid: 2\tRaha: 1000\tRaskustase: noob");
-        System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi");
-        Scanner edit = new Scanner(System.in);
-        if (edit.toString().equals("Mängijad"))
-
+        System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi)");
+        Scanner edit;
+        Scanner mKogus = null;
+        Scanner rKogus = null;
+        Scanner dKogus = null;
+        label:
+        while (true) {
+            edit = new Scanner(System.in);
+            String token = edit.next();
+            switch (token) {
+                case "Mängijad" -> {
+                    mKogus = new Scanner(System.in);
+                    String subToken1 = mKogus.next();
+                    settings[0][1] = subToken1;
+                }
+                case "Raha" -> {
+                    rKogus = new Scanner(System.in);
+                    String subToken2 = rKogus.next();
+                    settings[0][1] = subToken2;
+                }
+                case "Raskus" -> {
+                    dKogus = new Scanner(System.in);
+                    String subToken3 = dKogus.next();
+                    settings[0][1] = subToken3;
+                }
+                case "Tagasi" -> {
+                    break label;
+                }
+                default -> {
+                    System.out.println("Sisesta normaalne vastus.");
+                }
+            }
+        }
+        edit.close();
+        assert mKogus != null;
+        mKogus.close();
+        assert rKogus != null;
+        rKogus.close();
+        assert dKogus != null;
+        dKogus.close();
+        return settings;
     }
 
 
