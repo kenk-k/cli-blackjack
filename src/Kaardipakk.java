@@ -9,7 +9,6 @@ public class Kaardipakk {
     }
 
     //see paneb mind silmi välja kiskuma tahtma
-    //w kahekordne turborape loop
     public Kaardipakk(int mituPakki) {
         this.kaardid = new ArrayList<>();
         String[] mastid = new String[] {"Poti","Ärtu", "Risti", "Ruutu"};
