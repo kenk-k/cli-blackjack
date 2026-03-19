@@ -25,13 +25,18 @@ public class Kaart {
         int kaeSumma = 0;
         for (Kaart kaart: kaardid) {
             //why tf see autocorrectib selleks mitte '=='
-            if (kaart.number.equals("A"))
+            if (kaart.number.equals("A")) {
                 //Ässa väärtuse varieerumine
                 if (kaeSumma + 11 > 21) {
                     kaeSumma += 1;
                     continue;
+                } else {
+                    kaeSumma += kaart.vaartus;
                 }
-            kaeSumma += kaart.vaartus;
+            }
+            else {
+                kaeSumma += kaart.vaartus;
+            }
         }
         return kaeSumma;
     }
