@@ -1,11 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
-    Scanner input = new Scanner(System.in);
     static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         //Mängu alguse menüü.
