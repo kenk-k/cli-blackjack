@@ -1,25 +1,22 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
+    public static Scanner input = new Scanner(System.in);
     static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
         //Mängu alguse menüü.
-        String[][] defSätted = {{"players", "2"}, {"start", "1000"}, {"diff", "noob"}};
-        System.out.println("Tere tulemast kasiinosse.\n\n" +
-                "Vali tegevus:\tSätted (S)\tAbi (A)\tMängima (M)");
-        //Scanner valik;
+        String[][] mänguSätted = {{"players", "2"}, {"start", "1000"}, {"diff", "lihtne"}};
+        System.out.println("Tere tulemast kasiinosse.\n");
         label:
         while (true) {
-            //valik = new Scanner(System.in);
+            System.out.println("Vali tegevus:\tSätted (S)\tAbi (A)\tMängima (M)");
             String token = input.next();
             switch (token) {
                 case "S":
-                    defSätted = sätted(defSätted,input);
+                    mänguSätted = sätted(mänguSätted);
                     break;
                 case "A":
                     abi();
@@ -32,27 +29,38 @@ public class Main {
             }
         }
         Kaardipakk kaardipakk = new Kaardipakk(1);
-        Mangija diiler = new Mangija("Diiler", 10000000);
-        Mangija mina = new Mangija("Mina", 1000);
+        Mangija diiler = new Mangija("Diiler", Integer.MAX_VALUE);
+        Mangija mina = new Mangija("Mina", Integer.parseInt(mänguSätted[1][1]));
         kaardipakk.segamine();
         Vastane diilerAI = new Diiler();
         //tegevuste jaoks mängija objekt
 
         //vastaste loomine ja mangijate listi tegemine.
-        System.out.print("Mitme vastasega soovid mängida?(number) ");
         //Scanner vastasteKogus = new Scanner(System.in);
-        int vastasteKogusInt = input.nextInt();
+        int vastasteKogusInt = Integer.parseInt(mänguSätted[0][1]);
         ArrayList<Mangija> mangijad = new ArrayList<>();
         mangijad.add(diiler);
-        for (int i = 0; i < vastasteKogusInt; i++) {
-            Mangija lisatav = new Mangija("Tauno Maksimus", 1000);
+        for (int i = 1; i <= vastasteKogusInt; i++) {
+            Mangija lisatav = new Mangija("Vastane " + i, Integer.parseInt(mänguSätted[1][1]));
             mangijad.add(lisatav);
         }
         mangijad.add(mina);
         Vastane minaAI = new Mina();
+        Vastane vastasteAI;
+        if (mänguSätted[2][1].equals("lihtne")) {
+            vastasteAI = new SuvalineTampija();
+        }
+        else {
+            vastasteAI = new Vastane();
+        }
+
 
         //TODO: bet süsteem implementeerida
+        mäng:
         while (true) {
+            if (kaardipakk.suurus() < 27) {
+                kaardipakk = new Kaardipakk(1);
+            }
             jagamised(mangijad, kaardipakk);
             //TODO: raunde AI vastaste ja diileri vahel saaks targemalt teha
             for (Mangija m : mangijad) {
@@ -63,7 +71,7 @@ public class Main {
                 } else if (m == mina) {
                     raund(m, minaAI, kaardipakk);
                 } else {
-                    raund(m, diilerAI, kaardipakk);
+                    raund(m, vastasteAI, kaardipakk);
                 }
             }
             raund(diiler, diilerAI, kaardipakk);
@@ -75,19 +83,27 @@ public class Main {
                 System.out.println("You lose :(");
             }
             System.out.println("uus mäng(Y/N)? ");
-            if (Objects.equals(input.next(), "N"))
-                break;
+            String uusMäng = input.next();
+            if (Objects.equals(uusMäng, "Y")) {
+                for (Mangija mangija: mangijad) {
+                    mangija.tuhjendaKasi();
+                }
+            }
+            else if (Objects.equals(uusMäng,"N"))
+                input.close();
+                break mäng;
         }
 
     }
 
     //TODO: nimetada see meetod kuidagi targemalt
     public static int raund(Mangija mangija, Vastane ai, Kaardipakk kaardipakk) {
+        System.out.println("Mängija " + mangija.getNimi() + " kord");
         while (Kaart.kaeVaartus(mangija.getKasi()) <= 21) {
+            System.out.println(mangija.getKasi());
             char tegevus = ai.tegevus(mangija.getKasi());
             if (tegevus == 'H') {
                 mangija.lisaKaart(kaardipakk.jagamine());
-                System.out.println(mangija.getKasi());
             } else break;
         }
         return Kaart.kaeVaartus(mangija.getKasi());
@@ -113,25 +129,32 @@ public class Main {
         }
     }
 
-    public static String[][] sätted(String[][] settings, Scanner input) {
-        System.out.println("Redigeeri sätteid\n\n" +
-                "Praegused sätted\nMängijaid: 2\tRaha: 1000\tRaskustase: noob");
+    public static String[][] sätted(String[][] settings) {
+        System.out.println("Redigeeri sätteid\n");
+
         System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi)");
         label:
         while (true) {
+            System.out.println("Praegused sätted\n(Mängijad): " +
+                    settings[0][1]+ "\t(Raha): " +
+                    settings[1][1] +"\t(Raskus): " +
+                    settings[2][1]);
             String token = input.next();
             switch (token) {
                 case "Mängijad" -> {
+                    System.out.println("Mitme mängijaga soovite mängida?");
                     String subToken1 = input.next();
                     settings[0][1] = subToken1;
                 }
                 case "Raha" -> {
+                    System.out.println("Kui suure rahahulgaga tahate mängida?");
                     String subToken2 = input.next();
-                    settings[0][1] = subToken2;
+                    settings[1][1] = subToken2;
                 }
                 case "Raskus" -> {
+                    System.out.println("Kui raskete vastastega tahate mängida? (lihtne/raske)");
                     String subToken3 = input.next();
-                    settings[0][1] = subToken3;
+                    settings[2][1] = subToken3;
                 }
                 case "Tagasi" -> {
                     break label;

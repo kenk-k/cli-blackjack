@@ -27,6 +27,7 @@ public class Kaardipakk {
         }
     }
 
+
     public List<Kaart> getKaardid() {
         return kaardid;
     }
@@ -48,6 +49,10 @@ public class Kaardipakk {
 
     public Kaart jagamine() {
         return kaardid.removeFirst();
+    }
+
+    public int suurus() {
+        return kaardid.size();
     }
 
     public void lisamine(Kaart lisatav) {
