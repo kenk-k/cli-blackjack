@@ -1,24 +1,25 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
+    Scanner input = new Scanner(System.in);
     static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
         //Mängu alguse menüü.
         String[][] defSätted = {{"players", "2"}, {"start", "1000"}, {"diff", "noob"}};
         System.out.println("Tere tulemast kasiinosse.\n\n" +
                 "Vali tegevus:\tSätted (S)\tAbi (A)\tMängima (M)");
-        Scanner valik;
+        //Scanner valik;
         label:
         while (true) {
-            valik = new Scanner(System.in);
-            String token = valik.next();
+            //valik = new Scanner(System.in);
+            String token = input.next();
             switch (token) {
                 case "S":
-                    defSätted = sätted(defSätted);
+                    defSätted = sätted(defSätted,input);
                     break;
                 case "A":
                     abi();
@@ -30,8 +31,6 @@ public class Main {
                     break;
             }
         }
-        valik.close();
-
         Kaardipakk kaardipakk = new Kaardipakk(1);
         Mangija diiler = new Mangija("Diiler", 10000000);
         Mangija mina = new Mangija("Mina", 1000);
@@ -41,8 +40,8 @@ public class Main {
 
         //vastaste loomine ja mangijate listi tegemine.
         System.out.print("Mitme vastasega soovid mängida?(number) ");
-        Scanner vastasteKogus = new Scanner(System.in);
-        int vastasteKogusInt = vastasteKogus.nextInt();
+        //Scanner vastasteKogus = new Scanner(System.in);
+        int vastasteKogusInt = input.nextInt();
         ArrayList<Mangija> mangijad = new ArrayList<>();
         mangijad.add(diiler);
         for (int i = 0; i < vastasteKogusInt; i++) {
@@ -76,8 +75,7 @@ public class Main {
                 System.out.println("You lose :(");
             }
             System.out.println("uus mäng(Y/N)? ");
-            Scanner kordus = new Scanner(System.in);
-            if (Objects.equals(kordus.next(), "N"))
+            if (Objects.equals(input.next(), "N"))
                 break;
         }
 
@@ -104,43 +102,35 @@ public class Main {
     public static void abi() {
         File juhised = new File("Juhised.txt");
         try {
-            Scanner scan = new Scanner(juhised, "utf-8");
-            while (scan.hasNextLine()) {
-                System.out.println(scan.nextLine());
+            Scanner juhisedScan = new Scanner(juhised, "utf-8");
+            while (juhisedScan.hasNextLine()) {
+                System.out.println(juhisedScan.nextLine());
             }
-            scan.close();
+            juhisedScan.close();
         }
         catch (FileNotFoundException e) {
             System.out.println("Juhiste faili ei leitud. Parandage oma installatsioon.");
         }
     }
 
-    public static String[][] sätted(String[][] settings) {
+    public static String[][] sätted(String[][] settings, Scanner input) {
         System.out.println("Redigeeri sätteid\n\n" +
                 "Praegused sätted\nMängijaid: 2\tRaha: 1000\tRaskustase: noob");
         System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi)");
-        Scanner edit;
-        Scanner mKogus = null;
-        Scanner rKogus = null;
-        Scanner dKogus = null;
         label:
         while (true) {
-            edit = new Scanner(System.in);
-            String token = edit.next();
+            String token = input.next();
             switch (token) {
                 case "Mängijad" -> {
-                    mKogus = new Scanner(System.in);
-                    String subToken1 = mKogus.next();
+                    String subToken1 = input.next();
                     settings[0][1] = subToken1;
                 }
                 case "Raha" -> {
-                    rKogus = new Scanner(System.in);
-                    String subToken2 = rKogus.next();
+                    String subToken2 = input.next();
                     settings[0][1] = subToken2;
                 }
                 case "Raskus" -> {
-                    dKogus = new Scanner(System.in);
-                    String subToken3 = dKogus.next();
+                    String subToken3 = input.next();
                     settings[0][1] = subToken3;
                 }
                 case "Tagasi" -> {
@@ -151,13 +141,6 @@ public class Main {
                 }
             }
         }
-        edit.close();
-        assert mKogus != null;
-        mKogus.close();
-        assert rKogus != null;
-        rKogus.close();
-        assert dKogus != null;
-        dKogus.close();
         return settings;
     }
 
