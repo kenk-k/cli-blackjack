@@ -23,6 +23,8 @@ public class Mangija {
         return rahahulk;
     }
 
+    public void setRahahulk(double rahahulk) { this.rahahulk = rahahulk; }
+
     public List<Kaart> getKasi() {
         return kasi;
     }
