@@ -17,22 +17,12 @@ public class Kaart {
         return number;
     }
 
-    public int getVaartus() {
-        return vaartus;
-    }
-
     public static int kaeVaartus(List<Kaart> kaardid) {
         int kaeSumma = 0;
         for (Kaart kaart: kaardid) {
-            //why tf see autocorrectib selleks mitte '=='
-            if (kaart.number.equals("A")) {
+            if (kaart.number.equals("A") && kaeSumma + 11 > 21) {
                 //Ässa väärtuse varieerumine
-                if (kaeSumma + 11 > 21) {
                     kaeSumma += 1;
-                    continue;
-                } else {
-                    kaeSumma += kaart.vaartus;
-                }
             }
             else {
                 kaeSumma += kaart.vaartus;

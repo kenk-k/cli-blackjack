@@ -27,11 +27,6 @@ public class Kaardipakk {
         }
     }
 
-
-    public List<Kaart> getKaardid() {
-        return kaardid;
-    }
-
     public void setKaardid(List<Kaart> kaardid) {
         this.kaardid = kaardid;
     }

@@ -3,52 +3,59 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
+import java.lang.Thread;
 
 public class Main {
     public static Scanner input = new Scanner(System.in);
-    static void main(String[] args) {
-        //Mängu alguse menüü.
+    static void main(String[] args) throws InterruptedException {
+        //Sätete massiiv
         String[][] mänguSätted = {{"players", "2"}, {"start", "1000"}, {"diff", "lihtne"}};
         System.out.println("Tere tulemast kasiinosse.\n");
+        //Mängu menüü loop
         label:
         while (true) {
             System.out.println("Vali tegevus:\tSätted (S)\tAbi (A)\tMängima (M)");
             String token = input.next();
             switch (token) {
                 case "S":
+                    //Viib sätete meetodisse, kus saab sätteid muuta
                     mänguSätted = sätted(mänguSätted);
                     break;
                 case "A":
+                    //Väljastab juhiste teksti
                     abi();
                     break;
                 case "M":
+                    //breakib menüü loopi ja läheb edasi mängu
                     break label;
                 default:
                     System.out.println("Sisesta sobiv valik.");
                     break;
             }
         }
-        Kaardipakk kaardipakk = new Kaardipakk(1);
+        Kaardipakk kaardipakk = new Kaardipakk(3);
+        int kaardipakkAlgSuurus = kaardipakk.suurus();
         Mangija diiler = new Mangija("Diiler", Integer.MAX_VALUE);
-        Mangija mina = new Mangija("Mina", Integer.parseInt(mänguSätted[1][1]));
+        Mangija kasutaja = new Mangija("Kasutaja", Integer.parseInt(mänguSätted[1][1]));
         kaardipakk.segamine();
         Vastane diilerAI = new Diiler();
         //tegevuste jaoks mängija objekt
 
         //vastaste loomine ja mangijate listi tegemine.
-        //Scanner vastasteKogus = new Scanner(System.in);
         int vastasteKogusInt = Integer.parseInt(mänguSätted[0][1]);
         ArrayList<Mangija> mangijad = new ArrayList<>();
         mangijad.add(diiler);
+        //Tekitab soovitud arvu mängijaid ning lisab need massiivi
         for (int i = 1; i <= vastasteKogusInt; i++) {
             Mangija lisatav = new Mangija("Vastane " + i, Integer.parseInt(mänguSätted[1][1]));
             mangijad.add(lisatav);
         }
-        mangijad.add(mina);
-        Vastane minaAI = new Mina();
+        mangijad.add(kasutaja);
+        Vastane Kasutaja = new Kasutaja();
         Vastane vastasteAI;
+        //lisab vastase loogika vastavalt kasutaja valikule
         if (mänguSätted[2][1].equals("lihtne")) {
-            vastasteAI = new SuvalineTampija();
+            vastasteAI = new LihtneVastane();
         }
         else {
             vastasteAI = new Vastane();
@@ -56,65 +63,93 @@ public class Main {
 
 
         //TODO: bet süsteem implementeerida
-        mäng:
         while (true) {
-            if (kaardipakk.suurus() < 27) {
-                kaardipakk = new Kaardipakk(1);
+            //kui kaardipakk on rohkem, kui pooltühi, segatakse kaarte
+            if (kaardipakk.suurus() < (kaardipakkAlgSuurus / 2)) {
+                kaardipakk = new Kaardipakk(3);
+                System.out.println("Kaardipakki segatakse...");
+                Thread.sleep(3000);
+                kaardipakk.segamine();
             }
             jagamised(mangijad, kaardipakk);
-            //TODO: raunde AI vastaste ja diileri vahel saaks targemalt teha
+            //Käiakse kõik mängijad läbi
             for (Mangija m : mangijad) {
+                //Kui mängija diiler, näidatakse ainult pealmist kaarti, muidu näidatakse käsi
+                //ette ning mängitakse raund ära
                 if (m == diiler) {
                     System.out.println("diiler:");
                     System.out.println(diiler.getKasi().get(1));
-                    System.out.println(Kaart.kaeVaartus(diiler.getKasi()));
-                } else if (m == mina) {
-                    raund(m, minaAI, kaardipakk);
+                    Thread.sleep(200);
+                } else if (m == kasutaja) {
+                    raund(m, Kasutaja, kaardipakk);
                 } else {
                     raund(m, vastasteAI, kaardipakk);
                 }
             }
+            //Diiler mängib viimasena
             raund(diiler, diilerAI, kaardipakk);
 
-            int minuKaevaartus = Kaart.kaeVaartus(mina.getKasi());
+            int minuKaevaartus = Kaart.kaeVaartus(kasutaja.getKasi());
+            //Kui kasutaja sai suurema skoori, kui diiler, võitis kasutaja
             if (21 >= minuKaevaartus && minuKaevaartus >= Kaart.kaeVaartus(diiler.getKasi())) {
-                System.out.println("You win!");
+                System.out.println("Võitsid!");
             } else {
-                System.out.println("You lose :(");
+                System.out.println("Kaotasid :(");
             }
             System.out.println("uus mäng(Y/N)? ");
             String uusMäng = input.next();
             if (Objects.equals(uusMäng, "Y")) {
                 for (Mangija mangija: mangijad) {
                     mangija.tuhjendaKasi();
+                    continue;
                 }
             }
             else if (Objects.equals(uusMäng,"N"))
                 input.close();
-                break mäng;
+                break;
         }
 
     }
 
-    //TODO: nimetada see meetod kuidagi targemalt
-    public static int raund(Mangija mangija, Vastane ai, Kaardipakk kaardipakk) {
+
+    /**
+     *
+     * @param mangija Mängija, kes mängib raundi (vastane või kasutaja)
+     * @param ai Vastase loogika/kasutaja tegevused
+     * @param kaardipakk Kaardipakk, kust kaardid võetakse
+     */
+    public static void raund(Mangija mangija, Vastane ai, Kaardipakk kaardipakk) throws InterruptedException {
         System.out.println("Mängija " + mangija.getNimi() + " kord");
+        Thread.sleep(1000);
         while (Kaart.kaeVaartus(mangija.getKasi()) <= 21) {
             System.out.println(mangija.getKasi());
             char tegevus = ai.tegevus(mangija.getKasi());
             if (tegevus == 'H') {
                 mangija.lisaKaart(kaardipakk.jagamine());
-            } else break;
+            } else if (tegevus =='D') {
+                //TODO: siia panused
+                mangija.lisaKaart(kaardipakk.jagamine());
+                break;
+            } else {
+                break;
+            }
         }
-        return Kaart.kaeVaartus(mangija.getKasi());
+        System.out.println(mangija.getNimi() + " käsi:\n"+
+                mangija.getKasi()+"\nMängija punktid: "+
+                Kaart.kaeVaartus(mangija.getKasi()));
     }
-
+    /**
+     * Jagab kõigile mängijatele kätte 2 kaarti.
+     */
     public static void jagamised(ArrayList<Mangija> md, Kaardipakk k) {
         for (Mangija m : md)
             for (int i = 0; i < 2; i++)
                 m.lisaKaart(k.jagamine());
     }
 
+    /**
+     * Väljastab ekraanile abistava teksti.
+     */
     public static void abi() {
         File juhised = new File("Juhised.txt");
         try {
@@ -129,6 +164,11 @@ public class Main {
         }
     }
 
+    /**
+     * Küsib kasutajalt soovitud sätteid ning muudab neid.
+     * @param settings Algsete sätete massiiv
+     * @return Muudetud sätete massiiv
+     */
     public static String[][] sätted(String[][] settings) {
         System.out.println("Redigeeri sätteid\n");
 
