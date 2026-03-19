@@ -1,9 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     static void main(String[] args) {
@@ -53,6 +50,15 @@ public class Main {
 
         //TODO: bet süsteem implementeerida
         while (true) {
+            //Küsib panust ja koostab panuste HashMapi
+            System.out.println("Kui suure raha peale mängid?");
+            Scanner panuseInput = new Scanner(System.in);
+            double panuseSuurus = panuseInput.nextDouble();
+            panuseInput.close();
+            if (!mina.panusta(panuseSuurus))
+                System.out.println("Oled liiga vaene, et sellise raha peale mängida.");
+            HashMap<Mangija, Double> panused = panusteLoomine(mangijad, panuseSuurus);
+
             jagamised(mangijad, kaardipakk);
             //TODO: raunde AI vastaste ja diileri vahel saaks targemalt teha
             for (Mangija m : mangijad) {
@@ -68,15 +74,16 @@ public class Main {
             }
             raund(diiler, diilerAI, kaardipakk);
 
-            int minuKaevaartus = Kaart.kaeVaartus(mina.getKasi());
-            if (21 >= minuKaevaartus && minuKaevaartus >= Kaart.kaeVaartus(diiler.getKasi())) {
-                System.out.println("You win!");
-            } else {
-                System.out.println("You lose :(");
-            }
+            int diileriKaevaartus = Kaart.kaeVaartus(diiler.getKasi());
+            //Muudab raha panuste suurusele ja raundi tulemusele vastavalt.
+            panusteRealiseerimine(panused, diileriKaevaartus);
             System.out.println("uus mäng(Y/N)? ");
-            if (Objects.equals(input.next(), "N"))
+            if (Objects.equals(input.next(), "N")) {
                 break;
+            } else if (mina.getRahahulk() == 0) {
+                System.out.println("Valikut pole");
+                break;
+            }
         }
 
     }
@@ -144,5 +151,48 @@ public class Main {
         return settings;
     }
 
+    //Loob panuste HashMapi.
+    public static HashMap<Mangija, Double> panusteLoomine(ArrayList<Mangija> mangijad, double panus) {
+        HashMap<Mangija, Double> panused = new HashMap<>();
+        for (Mangija m : mangijad) {
+            if (m.panusta(panus))
+                panused.put(m, panus);
+            else {
+                //Eemaldab mängust need, kes panustada ei saa.
+                System.out.println(m.getNimi() + " ei ole rahaliselt võimekas, mängust välja langenud.");
+                mangijad.remove(m);
+            }
+        }
+        return panused;
+    }
 
+    public static void panusteRealiseerimine(HashMap<Mangija, Double> mangijad, int diileriKasi) {
+        for (Map.Entry<Mangija, Double> panustamine : mangijad.entrySet()) {
+            Mangija m = panustamine.getKey();
+            double panus = panustamine.getValue();
+
+            if (Objects.equals(m.getNimi(), "Diiler")) continue;
+
+            boolean onKasutaja = Objects.equals(m.getNimi(), "Mina");
+
+            //Kontrollib iga mängija käe ja annab raha vastavalt.
+            int praeguneKasi = Kaart.kaeVaartus(m.getKasi());
+            if (praeguneKasi > diileriKasi && praeguneKasi == 21 && m.getKasi().size() == 2) {
+                m.setRahahulk(m.getRahahulk() + panus * 2.5);
+                if (onKasutaja)
+                    System.out.println("BLACKJACK!!! Said 2.5 korda panuse tagasi!");
+            } else if (praeguneKasi > diileriKasi) {
+                m.setRahahulk(m.getRahahulk() + panus * 2);
+                if (onKasutaja)
+                    System.out.println("Võitsid! Said 2 korda panuse tagasi");
+            } else if (praeguneKasi == diileriKasi) {
+                m.setRahahulk(m.getRahahulk() + panus);
+                if (onKasutaja)
+                    System.out.println("Viik. Said panuse tagasi.");
+            } else {
+                if (onKasutaja)
+                    System.out.println("Kaotasid. Jäid panusest ilma.");
+            }
+        }
+    }
 }
