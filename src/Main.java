@@ -109,9 +109,10 @@ public class Main {
             System.out.println("uus mäng(Y/N)? ");
             if (Objects.equals(input.next(), "N")) {
                 break;
-            } else if (mina.getRahahulk() == 0) {
+            } else if (kasutaja.getRahahulk() == 0) {
                 System.out.println("Valikut pole");
                 break;
+            }
             String uusMäng = input.next();
             if (Objects.equals(uusMäng, "Y")) {
                 for (Mangija mangija: mangijad) {
@@ -119,9 +120,10 @@ public class Main {
                     continue;
                 }
             }
-            else if (Objects.equals(uusMäng,"N"))
+            else if (Objects.equals(uusMäng,"N")) {
                 input.close();
                 break;
+            }
         }
 
     }
@@ -244,7 +246,7 @@ public class Main {
 
             if (Objects.equals(m.getNimi(), "Diiler")) continue;
 
-            boolean onKasutaja = Objects.equals(m.getNimi(), "Mina");
+            boolean onKasutaja = Objects.equals(m.getNimi(), "Kasutaja");
 
             //Kontrollib iga mängija käe ja annab raha vastavalt.
             int praeguneKasi = Kaart.kaeVaartus(m.getKasi());
