@@ -62,12 +62,17 @@ public class Main {
         //TODO: bet süsteem implementeerida
         while (true) {
             //Küsib panust ja koostab panuste HashMapi
-            System.out.println("Kui suure raha peale mängid?");
-            Scanner panuseInput = new Scanner(System.in);
-            double panuseSuurus = panuseInput.nextDouble();
-            panuseInput.close();
-            if (!kasutaja.panusta(panuseSuurus))
-                System.out.println("Oled liiga vaene, et sellise raha peale mängida.");
+            double panuseSuurus;
+            while (true) {
+                System.out.println("Kui suure raha peale mängid?");
+                Scanner panuseInput = new Scanner(System.in);
+                panuseSuurus = panuseInput.nextDouble();
+                panuseInput.close();
+                if (!kasutaja.panusta(panuseSuurus))
+                    System.out.println("Oled liiga vaene, et sellise raha peale mängida. Su rahasumma on " + kasutaja.getRahahulk());
+                else
+                    break;
+            }
             HashMap<Mangija, Double> panused = panusteLoomine(mangijad, panuseSuurus);
 
 
@@ -115,12 +120,11 @@ public class Main {
             }
             String uusMäng = input.next();
             if (Objects.equals(uusMäng, "Y")) {
-                for (Mangija mangija: mangijad) {
+                for (Mangija mangija : mangijad) {
                     mangija.tuhjendaKasi();
                     continue;
                 }
-            }
-            else if (Objects.equals(uusMäng,"N")) {
+            } else if (Objects.equals(uusMäng, "N")) {
                 input.close();
                 break;
             }
