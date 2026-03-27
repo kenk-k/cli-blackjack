@@ -33,7 +33,7 @@ public class Main {
                     break;
             }
         }
-        Kaardipakk kaardipakk = new Kaardipakk(3);
+        Kaardipakk kaardipakk = new Kaardipakk(Integer.parseInt(mänguSätted[3]));
         int kaardipakkAlgSuurus = kaardipakk.suurus();
         Mangija diiler = new Mangija("Diiler", Integer.MAX_VALUE);
         Mangija kasutaja = new Mangija("Kasutaja", Integer.parseInt(mänguSätted[1]));
@@ -75,7 +75,7 @@ public class Main {
 
             //kui kaardipakk on rohkem, kui pooltühi, segatakse kaarte
             if (kaardipakk.suurus() < (kaardipakkAlgSuurus / 2)) {
-                kaardipakk = new Kaardipakk(3);
+                kaardipakk = new Kaardipakk(Integer.parseInt(mänguSätted[3]));
                 System.out.println("Kaardipakki segatakse...");
                 Thread.sleep(3000);
                 kaardipakk.segamine();
