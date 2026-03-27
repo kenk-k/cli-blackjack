@@ -6,6 +6,7 @@ import java.util.Random;
 public class Main {
     //Üks scanner terve programmi jaoks
     public static Scanner input = new Scanner(System.in);
+    public static Random rand = new Random();
 
     static void main(String[] args) throws InterruptedException {
         //Sätete massiiv: vastaste arv, algne rahasumma igal mängijal, vastaste raskusaste,
@@ -251,7 +252,6 @@ public class Main {
      * @return HashMap mängijatest ja nende panustest.
      */
     public static HashMap<Mangija, Double> panusteLoomine(ArrayList<Mangija> mangijad, double panus) {
-        Random rand = new Random();
         HashMap<Mangija, Double> panused = new HashMap<>();
         List<Mangija> eemaldatavad = new ArrayList<>();
         for (Mangija m : mangijad) {

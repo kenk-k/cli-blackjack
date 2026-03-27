@@ -9,7 +9,7 @@ public class LihtneVastane extends Vastane {
     @Override
     public char tegevus(List<Kaart> kasi) throws InterruptedException {
         Thread.sleep(1000);
-        int suvalineBit = (int) Math.round(Math.random());
+        int suvalineBit = Main.rand.nextInt(2);
         if (suvalineBit==1) {
             System.out.println("Hit!");
             return 'H';
