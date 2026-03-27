@@ -4,10 +4,13 @@ import java.util.*;
 import java.util.Random;
 
 public class Main {
+    //Üks scanner terve programmi jaoks
     public static Scanner input = new Scanner(System.in);
+
     static void main(String[] args) throws InterruptedException {
-        //Sätete massiiv
-        String[] mänguSätted = {"2", "1000", "lihtne"};
+        //Sätete massiiv: vastaste arv, algne rahasumma igal mängijal, vastaste raskusaste,
+        // kaardipakkide arv
+        String[] mänguSätted = {"2", "1000", "lihtne","3"};
         System.out.println("Tere tulemast kasiinosse.\n");
         //Mängu menüü loop
         label:
@@ -31,7 +34,7 @@ public class Main {
                     break;
             }
         }
-        Kaardipakk kaardipakk = new Kaardipakk(3);
+        Kaardipakk kaardipakk = new Kaardipakk(Integer.parseInt(mänguSätted[3]));
         int kaardipakkAlgSuurus = kaardipakk.suurus();
         Mangija diiler = new Mangija("Diiler", Integer.MAX_VALUE);
         Mangija kasutaja = new Mangija("Kasutaja", Integer.parseInt(mänguSätted[1]));
@@ -60,7 +63,6 @@ public class Main {
         }
 
 
-        //TODO: bet süsteem implementeerida
         while (true) {
             //Küsib panust ja koostab panuste HashMapi
             System.out.println("Kui suure raha peale mängid?");
@@ -74,7 +76,7 @@ public class Main {
 
             //kui kaardipakk on rohkem, kui pooltühi, segatakse kaarte
             if (kaardipakk.suurus() < (kaardipakkAlgSuurus / 2)) {
-                kaardipakk = new Kaardipakk(3);
+                kaardipakk = new Kaardipakk(Integer.parseInt(mänguSätted[3]));
                 System.out.println("Kaardipakki segatakse...");
                 Thread.sleep(3000);
                 kaardipakk.segamine();
@@ -194,48 +196,60 @@ public class Main {
 
     /**
      * Küsib kasutajalt soovitud sätteid ning muudab neid.
-     * @param settings Algsete sätete massiiv
+     * @param algsätted Algsete sätete massiiv
      * @return Muudetud sätete massiiv
      */
-    public static String[] sätted(String[] settings) {
+    public static String[] sätted(String[] algsätted) {
         System.out.println("Redigeeri sätteid\n");
 
         System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi)");
-        label:
+        säteteLoop:
         while (true) {
             System.out.println("Praegused sätted\n(Mängijad): " +
-                    settings[0]+ "\t(Raha): " +
-                    settings[1] +"\t(Raskus): " +
-                    settings[2]);
+                    algsätted[0]+ "\t(Raha): " +
+                    algsätted[1] +"\t(Raskus): " +
+                    algsätted[2] + "\t (Kaardipakid): " +
+                    algsätted[3]);
             String token = input.next();
             switch (token) {
                 case "Mängijad" -> {
                     System.out.println("Mitme mängijaga soovite mängida?");
-                    String subToken1 = input.next();
-                    settings[0] = subToken1;
+                    String subToken = input.next();
+                    algsätted[0] = subToken;
                 }
                 case "Raha" -> {
                     System.out.println("Kui suure rahahulgaga tahate mängida?");
-                    String subToken2 = input.next();
-                    settings[1] = subToken2;
+                    String subToken = input.next();
+                    algsätted[1] = subToken;
                 }
                 case "Raskus" -> {
                     System.out.println("Kui raskete vastastega tahate mängida? (lihtne/raske)");
-                    String subToken3 = input.next();
-                    settings[2] = subToken3;
+                    String subToken = input.next();
+                    algsätted[2] = subToken;
                 }
+                case "Kaardipakid" -> {
+                    System.out.println("Mitme kaardipakiga tahate mängida?");
+                    String subToken = input.next();
+                    algsätted[3] = subToken;
+                }
+
                 case "Tagasi" -> {
-                    break label;
+                    break säteteLoop;
                 }
                 default -> {
                     System.out.println("Sisesta normaalne vastus.");
                 }
             }
         }
-        return settings;
+        return algsätted;
     }
 
-    //Loob panuste HashMapi.
+    /**
+     * Loob panuse põhjal HashMapi ning võtab kõikidelt mängijatelt selle summa ära.
+      * @param mangijad Mängus olevad mängijad
+     * @param panus Panuse suurus
+     * @return HashMap mängijatest ja nende panustest.
+     */
     public static HashMap<Mangija, Double> panusteLoomine(ArrayList<Mangija> mangijad, double panus) {
         Random rand = new Random();
         HashMap<Mangija, Double> panused = new HashMap<>();
@@ -269,6 +283,11 @@ public class Main {
         return panused;
     }
 
+    /**
+     * Kontrollib iga mängija kätt ja jagab panused tagasi sõltuvalt mängija käest
+     * @param mangijad Mängijate HashMap
+     * @param diileriKasi Diileri käe väärtus
+     */
     public static void panusteRealiseerimine(HashMap<Mangija, Double> mangijad, int diileriKasi) {
         for (Map.Entry<Mangija, Double> panustamine : mangijad.entrySet()) {
             Mangija m = panustamine.getKey();
