@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.Random;
 
 public class Main {
     public static Scanner input = new Scanner(System.in);
@@ -94,15 +95,19 @@ public class Main {
                 }
             }
             //Diiler mängib viimasena
+            Thread.sleep(200);
             raund(diiler, diilerAI, kaardipakk,panused);
+            Thread.sleep(200);
 
             int diileriKaevaartus = Kaart.kaeVaartus(diiler.getKasi());
             //Muudab raha panuste suurusele ja raundi tulemusele vastavalt.
             panusteRealiseerimine(panused, diileriKaevaartus);
+            Thread.sleep(1000);
 
             System.out.println("Mängijate rahahulgad:");
             for (Mangija mangija: mangijad) {
                 if (!mangija.getNimi().equals("Diiler"))
+                    Thread.sleep(500);
                     System.out.println(mangija.getNimi() + ": " + mangija.getRahahulk());
             }
             if (kasutaja.getRahahulk() == 0) {
@@ -117,7 +122,6 @@ public class Main {
             if (Objects.equals(uusMäng, "Y")) {
                 for (Mangija mangija: mangijad) {
                     mangija.tuhjendaKasi();
-
                 }
             }
             else if (Objects.equals(uusMäng,"N")) {
@@ -126,6 +130,7 @@ public class Main {
             }
         }
 
+        System.out.println("Lahkusid kasiinost " + kasutaja.getRahahulk() + " euroga. Kas su minek oli seda väärt?");
     }
 
 
@@ -232,22 +237,28 @@ public class Main {
 
     //Loob panuste HashMapi.
     public static HashMap<Mangija, Double> panusteLoomine(ArrayList<Mangija> mangijad, double panus) {
+        Random rand = new Random();
         HashMap<Mangija, Double> panused = new HashMap<>();
         List<Mangija> eemaldatavad = new ArrayList<>();
         for (Mangija m : mangijad) {
+            if (m.getNimi().equals("Diiler")) continue;
             if (!m.getNimi().equals("Kasutaja")) {
-                if (m.panusta(panus))
-                    panused.put(m, panus);
-                else {
+                if (m.getRahahulk() == 0) {
                     //Eemaldab mängust need, kes panustada ei saa.
                     System.out.println(m.getNimi() + " ei ole rahaliselt võimekas, mängust välja langenud.");
                     eemaldatavad.add(m);
+                }
+                else {
+                    int vastase_panus = rand.nextInt((int) m.getRahahulk() + 1);
+                    m.panusta(vastase_panus);
+                    panused.put(m, (double) vastase_panus);
                 }
             }
             else {
                 panused.put(m, panus);
             }
         }
+        //Eraldi tsükkel mangijate eemaldamiseks, sest eelmise loop ajal ei saanud sealt asju eemaldada.
         for (Mangija m: eemaldatavad) {
             for (Mangija m2: mangijad) {
                 if (m.equals(m2)) {
