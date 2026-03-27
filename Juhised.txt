@@ -1,4 +1,4 @@
-Menüüdes liikumiseks sisestada oma valitud tegevuse esitäht.
+Menüüdes liikumiseks sisestada oma valitud tegevuse esitäht või sulgudes olev sõna.
 Igal raundil sisestada oma panuse hulk.
 Seejärel näidatakse ette diileri pealmine kaart ning kõikide mängijate kaardid.
 Kui on sinu kord, siis tee valik: kas küsi kaarte juurde, seisa või topeltpanusta.
