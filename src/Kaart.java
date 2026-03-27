@@ -19,13 +19,21 @@ public class Kaart {
 
     public static int kaeVaartus(List<Kaart> kaardid) {
         int kaeSumma = 0;
+        int ässadeArv = 0;
         for (Kaart kaart: kaardid) {
-            if (kaart.number.equals("A") && kaeSumma + 11 > 21) {
+            if (kaart.number.equals("A")) {
                 //Ässa väärtuse varieerumine
-                    kaeSumma += 1;
+                    ässadeArv++;
+                    kaeSumma += kaart.vaartus;
             }
             else {
                 kaeSumma += kaart.vaartus;
+            }
+            if (kaeSumma>21) {
+                while (ässadeArv > 0) {
+                    kaeSumma -= 10;
+                    ässadeArv--;
+                }
             }
         }
         return kaeSumma;

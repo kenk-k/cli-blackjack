@@ -6,7 +6,7 @@ public class Main {
     public static Scanner input = new Scanner(System.in);
     static void main(String[] args) throws InterruptedException {
         //Sätete massiiv
-        String[][] mänguSätted = {{"players", "2"}, {"start", "1000"}, {"diff", "lihtne"}};
+        String[] mänguSätted = {"2", "1000", "lihtne"};
         System.out.println("Tere tulemast kasiinosse.\n");
         //Mängu menüü loop
         label:
@@ -33,25 +33,25 @@ public class Main {
         Kaardipakk kaardipakk = new Kaardipakk(3);
         int kaardipakkAlgSuurus = kaardipakk.suurus();
         Mangija diiler = new Mangija("Diiler", Integer.MAX_VALUE);
-        Mangija kasutaja = new Mangija("Kasutaja", Integer.parseInt(mänguSätted[1][1]));
+        Mangija kasutaja = new Mangija("Kasutaja", Integer.parseInt(mänguSätted[1]));
         kaardipakk.segamine();
         Vastane diilerAI = new Diiler();
         //tegevuste jaoks mängija objekt
 
         //vastaste loomine ja mangijate listi tegemine.
-        int vastasteKogusInt = Integer.parseInt(mänguSätted[0][1]);
+        int vastasteKogusInt = Integer.parseInt(mänguSätted[0]);
         ArrayList<Mangija> mangijad = new ArrayList<>();
         mangijad.add(diiler);
         //Tekitab soovitud arvu mängijaid ning lisab need massiivi
         for (int i = 1; i <= vastasteKogusInt; i++) {
-            Mangija lisatav = new Mangija("Vastane " + i, Integer.parseInt(mänguSätted[1][1]));
+            Mangija lisatav = new Mangija("Vastane " + i, Integer.parseInt(mänguSätted[1]));
             mangijad.add(lisatav);
         }
         mangijad.add(kasutaja);
         Vastane Kasutaja = new Kasutaja();
         Vastane vastasteAI;
         //lisab vastase loogika vastavalt kasutaja valikule
-        if (mänguSätted[2][1].equals("lihtne")) {
+        if (mänguSätted[2].equals("lihtne")) {
             vastasteAI = new LihtneVastane();
         }
         else {
@@ -63,11 +63,11 @@ public class Main {
         while (true) {
             //Küsib panust ja koostab panuste HashMapi
             System.out.println("Kui suure raha peale mängid?");
-            Scanner panuseInput = new Scanner(System.in);
-            double panuseSuurus = panuseInput.nextDouble();
-            panuseInput.close();
-            if (!kasutaja.panusta(panuseSuurus))
+            double panuseSuurus = input.nextDouble();
+            if (!kasutaja.panusta(panuseSuurus)) {
                 System.out.println("Oled liiga vaene, et sellise raha peale mängida.");
+                continue;
+            }
             HashMap<Mangija, Double> panused = panusteLoomine(mangijad, panuseSuurus);
 
 
@@ -88,36 +88,36 @@ public class Main {
                     System.out.println(diiler.getKasi().get(1));
                     Thread.sleep(200);
                 } else if (m == kasutaja) {
-                    raund(m, Kasutaja, kaardipakk);
+                    raund(m, Kasutaja, kaardipakk,panused);
                 } else {
-                    raund(m, vastasteAI, kaardipakk);
+                    raund(m, vastasteAI, kaardipakk,panused);
                 }
             }
             //Diiler mängib viimasena
-            raund(diiler, diilerAI, kaardipakk);
+            raund(diiler, diilerAI, kaardipakk,panused);
 
             int diileriKaevaartus = Kaart.kaeVaartus(diiler.getKasi());
             //Muudab raha panuste suurusele ja raundi tulemusele vastavalt.
             panusteRealiseerimine(panused, diileriKaevaartus);
-            int minuKaevaartus = Kaart.kaeVaartus(kasutaja.getKasi());
-            //Kui kasutaja sai suurema skoori, kui diiler, võitis kasutaja
-            if (21 >= minuKaevaartus && minuKaevaartus >= Kaart.kaeVaartus(diiler.getKasi())) {
-                System.out.println("Võitsid!");
-            } else {
-                System.out.println("Kaotasid :(");
+
+            System.out.println("Mängijate rahahulgad:");
+            for (Mangija mangija: mangijad) {
+                if (!mangija.getNimi().equals("Diiler"))
+                    System.out.println(mangija.getNimi() + ": " + mangija.getRahahulk());
+            }
+            if (kasutaja.getRahahulk() == 0) {
+                System.out.println("Oled vaene, pead kasiinost lahkuma");
+                input.close();
+                break;
             }
             System.out.println("uus mäng(Y/N)? ");
-            if (Objects.equals(input.next(), "N")) {
-                break;
-            } else if (kasutaja.getRahahulk() == 0) {
-                System.out.println("Valikut pole");
-                break;
-            }
+
             String uusMäng = input.next();
+
             if (Objects.equals(uusMäng, "Y")) {
                 for (Mangija mangija: mangijad) {
                     mangija.tuhjendaKasi();
-                    continue;
+
                 }
             }
             else if (Objects.equals(uusMäng,"N")) {
@@ -135,7 +135,9 @@ public class Main {
      * @param ai Vastase loogika/kasutaja tegevused
      * @param kaardipakk Kaardipakk, kust kaardid võetakse
      */
-    public static void raund(Mangija mangija, Vastane ai, Kaardipakk kaardipakk) throws InterruptedException {
+    public static void raund(Mangija mangija, Vastane ai,
+                             Kaardipakk kaardipakk,
+                             HashMap<Mangija, Double> panused) throws InterruptedException {
         System.out.println("Mängija " + mangija.getNimi() + " kord");
         Thread.sleep(1000);
         while (Kaart.kaeVaartus(mangija.getKasi()) <= 21) {
@@ -144,9 +146,13 @@ public class Main {
             if (tegevus == 'H') {
                 mangija.lisaKaart(kaardipakk.jagamine());
             } else if (tegevus =='D') {
-                //TODO: siia panused
-                mangija.lisaKaart(kaardipakk.jagamine());
-                break;
+                if (mangija.panusta(panused.get(mangija))) {
+                    panused.put(mangija, panused.get(mangija) * 2);
+                    mangija.lisaKaart(kaardipakk.jagamine());
+                    break;
+                } else {
+                    System.out.println("Oled liiga vaene, tee teine liigutus");
+                }
             } else {
                 break;
             }
@@ -186,32 +192,32 @@ public class Main {
      * @param settings Algsete sätete massiiv
      * @return Muudetud sätete massiiv
      */
-    public static String[][] sätted(String[][] settings) {
+    public static String[] sätted(String[] settings) {
         System.out.println("Redigeeri sätteid\n");
 
         System.out.println("Edit... (Mängijad/Raha/Raskus/Tagasi)");
         label:
         while (true) {
             System.out.println("Praegused sätted\n(Mängijad): " +
-                    settings[0][1]+ "\t(Raha): " +
-                    settings[1][1] +"\t(Raskus): " +
-                    settings[2][1]);
+                    settings[0]+ "\t(Raha): " +
+                    settings[1] +"\t(Raskus): " +
+                    settings[2]);
             String token = input.next();
             switch (token) {
                 case "Mängijad" -> {
                     System.out.println("Mitme mängijaga soovite mängida?");
                     String subToken1 = input.next();
-                    settings[0][1] = subToken1;
+                    settings[0] = subToken1;
                 }
                 case "Raha" -> {
                     System.out.println("Kui suure rahahulgaga tahate mängida?");
                     String subToken2 = input.next();
-                    settings[1][1] = subToken2;
+                    settings[1] = subToken2;
                 }
                 case "Raskus" -> {
                     System.out.println("Kui raskete vastastega tahate mängida? (lihtne/raske)");
                     String subToken3 = input.next();
-                    settings[2][1] = subToken3;
+                    settings[2] = subToken3;
                 }
                 case "Tagasi" -> {
                     break label;
@@ -227,13 +233,26 @@ public class Main {
     //Loob panuste HashMapi.
     public static HashMap<Mangija, Double> panusteLoomine(ArrayList<Mangija> mangijad, double panus) {
         HashMap<Mangija, Double> panused = new HashMap<>();
+        List<Mangija> eemaldatavad = new ArrayList<>();
         for (Mangija m : mangijad) {
-            if (m.panusta(panus))
-                panused.put(m, panus);
+            if (!m.getNimi().equals("Kasutaja")) {
+                if (m.panusta(panus))
+                    panused.put(m, panus);
+                else {
+                    //Eemaldab mängust need, kes panustada ei saa.
+                    System.out.println(m.getNimi() + " ei ole rahaliselt võimekas, mängust välja langenud.");
+                    eemaldatavad.add(m);
+                }
+            }
             else {
-                //Eemaldab mängust need, kes panustada ei saa.
-                System.out.println(m.getNimi() + " ei ole rahaliselt võimekas, mängust välja langenud.");
-                mangijad.remove(m);
+                panused.put(m, panus);
+            }
+        }
+        for (Mangija m: eemaldatavad) {
+            for (Mangija m2: mangijad) {
+                if (m.equals(m2)) {
+                    mangijad.remove(m);
+                }
             }
         }
         return panused;
@@ -254,14 +273,18 @@ public class Main {
                 m.setRahahulk(m.getRahahulk() + panus * 2.5);
                 if (onKasutaja)
                     System.out.println("BLACKJACK!!! Said 2.5 korda panuse tagasi!");
-            } else if (praeguneKasi > diileriKasi) {
+            } else if (praeguneKasi > diileriKasi && praeguneKasi <= 21) {
                 m.setRahahulk(m.getRahahulk() + panus * 2);
                 if (onKasutaja)
                     System.out.println("Võitsid! Said 2 korda panuse tagasi");
-            } else if (praeguneKasi == diileriKasi) {
+            } else if (praeguneKasi == diileriKasi && praeguneKasi <= 21) {
                 m.setRahahulk(m.getRahahulk() + panus);
                 if (onKasutaja)
                     System.out.println("Viik. Said panuse tagasi.");
+            } else if (praeguneKasi <= 21 && diileriKasi > 21) {
+                m.setRahahulk(m.getRahahulk() + panus * 2);
+                if (onKasutaja)
+                    System.out.println("Diiler bustis. Sa võitsid! Said 2 korda panuse tagasi");
             } else {
                 if (onKasutaja)
                     System.out.println("Kaotasid. Jäid panusest ilma.");
@@ -269,3 +292,4 @@ public class Main {
         }
     }
 }
+

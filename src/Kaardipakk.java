@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Kaardipakk {
@@ -31,14 +32,7 @@ public class Kaardipakk {
     }
 
     public void segamine() {
-        List<Kaart> uuedKaardid = new ArrayList<>();
-        for (int i = kaardid.size(); i > 0; i--) {
-            //Lisab uude List-i kaardi ja eemaldab eelmisest
-            Kaart praeguneKaart = kaardid.get((int)Math.round((Math.random() * (i-1))));
-            uuedKaardid.add(praeguneKaart);
-            kaardid.remove(praeguneKaart);
-        }
-        setKaardid(uuedKaardid);
+        Collections.shuffle(kaardid);
     }
 
     public Kaart jagamine() {
